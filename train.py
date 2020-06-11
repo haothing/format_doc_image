@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     obj_transforms = transforms.Compose([RotationListTransform(angles=[0, 30, 60, 90, -30, -60, -90]), ToTensorListTransform()])
     train_dataset = SynthData("E:/datasets/SynthText/SynthText_Gen", target_size=768, transform=obj_transforms, ground_true_file='from_ICDAR2017.mat')
-    num_folder = 'No.45'
+    num_folder = 'No.46'
     batch_size = 2
     star_epoch = 0
     end_epoch = 50
@@ -43,9 +43,9 @@ if __name__ == '__main__':
 
     checkpoint_filepath = './checkpoint'
     weights_filepath = './weights'
-    logs_dir = os.path.join('./tensorboard-logs', num_folder)
-    test_images_folder = './test-images/1'
-    result_folder = os.path.join('./result', num_folder)
+    logs_dir = os.path.join('./test/tensorboard-logs', num_folder)
+    test_images_folder = './test/images'
+    result_folder = os.path.join('./test/result', num_folder)
 
     shutil.rmtree(logs_dir, ignore_errors=True)
     os.makedirs(checkpoint_filepath, exist_ok=True)
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
 
     optimizer = optim.Adam(net.parameters(), lr=lr)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.6)
     #criterion = Maploss()
     criterion = torch.nn.MSELoss(reduce=False, size_average=False)
     net.train()
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         
         loss_value = 0
         scheduler.step()
-        print('scheduler lr: {}'.format(scheduler.get_lr()))
+        print('scheduler lr: {}'.format(scheduler.get_last_lr()))
 
         for index, (images, region_gt, affinity_gt) in enumerate(train_loader):
 
@@ -141,11 +141,8 @@ if __name__ == '__main__':
             print('Saving Check Point to {}'.format(checkpoint_filename))
             torch.save(net.state_dict(), checkpoint_filename)        
 
-            
-            result_folder = os.path.join(result_folder, checkpoint)
-
             text_dtc = TD(weight_path=checkpoint_filename)
-            text_dtc.draw_to_file(test_images_folder, dist_dir=result_folder, heatmap=True)
+            text_dtc.draw_to_file(test_images_folder, dist_dir=os.path.join(result_folder, checkpoint), heatmap=True)
 
             
         
