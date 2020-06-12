@@ -28,7 +28,7 @@ def parse_arg():
     #config.DATASET.ALPHABETS = alphabets.alphabet
 
     # use japanese character
-    char_file = open('./lib/config/japanese_char.txt', "r", encoding="utf-8")
+    char_file = open(os.path.join('./lib/config/', config.DATASET.ALPHABETS), "r", encoding="utf-8")
     config.DATASET.ALPHABETS = ''.join(char_file.read().splitlines())
 
     config.MODEL.NUM_CLASSES = len(config.DATASET.ALPHABETS)

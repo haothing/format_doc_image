@@ -1,5 +1,5 @@
 GPUID: 0
-WORKERS: 1
+WORKERS: 4
 PRINT_FREQ: 100
 SAVE_FREQ: 100
 PIN_MEMORY: False
@@ -12,16 +12,16 @@ CUDNN:
 
 DATASET:
   DATASET: OWN
-  ROOT: "E:/datasets/SynthText/japanese_kana_simple_font_10k"
+  ROOT: "/home/repo/datasets/SynthText/300k"
   JSON_FILE: {'train': 'E:/datasets/SynthText/japanese_kana_simple_font_10k/ground_true.txt', 'val': 'E:/datasets/SynthText/japanese_kana_simple_font_10k/test_ground_true.txt'}
   SCALE_FACTOR: 0.25
   ROT_FACTOR: 30
   STD: 0.193
   MEAN: 0.588
-  ALPHABETS: './lib/config/alphabets_ja.py'
+  ALPHABETS: 'japanese_char.txt'
 
 TRAIN:
-  BATCH_SIZE_PER_GPU: 100
+  BATCH_SIZE_PER_GPU: 512
   SHUFFLE: True
   BEGIN_EPOCH: 0
   END_EPOCH: 100

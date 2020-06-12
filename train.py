@@ -39,15 +39,18 @@ if __name__ == '__main__':
     batch_size = 2
     star_epoch = 0
     end_epoch = 50
-    lr = 1e-4 # the initial lr is 1e-4, and multiply 0.8 for every 10k iterations.
+    lr = 1e-3 # the initial lr is 1e-4, and multiply 0.8 for every 10k iterations.
 
     checkpoint_filepath = './checkpoint'
     weights_filepath = './weights'
-    logs_dir = os.path.join('./test/tensorboard-logs', num_folder)
+
     test_images_folder = './test/images'
+    logs_dir = os.path.join('./test/tensorboard-logs', num_folder)
     result_folder = os.path.join('./test/result', num_folder)
 
     shutil.rmtree(logs_dir, ignore_errors=True)
+    shutil.rmtree(result_folder, ignore_errors=True)
+
     os.makedirs(checkpoint_filepath, exist_ok=True)
     os.makedirs(weights_filepath, exist_ok=True)
     os.makedirs(logs_dir, exist_ok=True)
