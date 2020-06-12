@@ -13,7 +13,7 @@ CUDNN:
 DATASET:
   DATASET: OWN
   ROOT: "/home/repo/datasets/SynthText/300k"
-  JSON_FILE: {'train': 'E:/datasets/SynthText/japanese_kana_simple_font_10k/ground_true.txt', 'val': 'E:/datasets/SynthText/japanese_kana_simple_font_10k/test_ground_true.txt'}
+  JSON_FILE: {'train': '/home/repo/datasets/SynthText/300k/ground_true.txt', 'val': '/home/repo/datasets/SynthText/300k/test_ground_true.txt'}
   SCALE_FACTOR: 0.25
   ROT_FACTOR: 30
   STD: 0.193
