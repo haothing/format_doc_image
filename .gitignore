@@ -5,5 +5,5 @@ __pycache__/
 *.pth
 test/tensorboard-logs/
 test/result/
-crnn/output/
+crnn\output\
 output/
