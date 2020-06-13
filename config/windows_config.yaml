@@ -1,0 +1,58 @@
+GPUID: 0
+WORKERS: 0
+PRINT_FREQ: 10
+SAVE_CP_FROM: 10 # epoch to start save checkpoint 
+SAVE_CP_FREQ: 10 # save checkpoint every SAVE_FREQ epoch
+PIN_MEMORY: False
+OUTPUT_DIR: 'output'
+DISTRIBUTER: True
+RANK: 0 # Rank of the current process. 
+WORLD_SIZE: 1
+
+CUDNN:
+  BENCHMARK: True
+  DETERMINISTIC: False
+  ENABLED: True
+
+DATASET:
+  DATASET: OWN
+  ROOT: "E:/datasets/SynthText/SynthText_Gen"
+  GT_FILE: {'train': 'from_ICDAR2017.mat', 'val': 'from_ICDAR2017_val.mat'}
+  SCALE_FACTOR: 0.25
+  ROT_FACTOR: 30
+  STD: 0.193
+  MEAN: 0.588
+  ALPHABETS: 'japanese_kana.txt'
+
+TRAIN:
+  BATCH_SIZE_PER_GPU: 200
+  SHUFFLE: True
+  BEGIN_EPOCH: 0
+  END_EPOCH: 200
+  RESUME:
+    IS_RESUME: False
+    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/2020-06-12-17-08/checkpoints/checkpoint_99_acc_0.0470.pth'
+  OPTIMIZER: 'adam'
+  #LR: 0.003 2020-06-12-18-14\log
+  LR: 0.002
+  WD: 0.0
+  #LR_STEP: [60, 80] 
+  LR_STEP: [80]
+  LR_FACTOR: 1
+  MOMENTUM: 0.0
+  NESTEROV: False
+  RMSPROP_ALPHA:
+  RMSPROP_CENTERED:
+
+TEST:
+  BATCH_SIZE_PER_GPU: 100
+  SHUFFLE: True
+  NUM_TEST: 10
+  NUM_TEST_DISP: 10
+
+MODEL:
+  NAME: 'crnn'
+  IMAGE_SIZE: 768
+  NUM_CLASSES: 0
+  NUM_HIDDEN: 256
+

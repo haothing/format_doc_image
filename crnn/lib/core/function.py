@@ -56,13 +56,12 @@ def train(config, train_loader, dataset, converter, model, criterion, optimizer,
         losses.update(loss.item(), inp.size(0))
 
         batch_time.update(time.time()-end)
-        if i % config.PRINT_FREQ == 0:
-            msg = 'Epoch: [{0}][{1}/{2}]\t' \
+        if (i + 1) % config.PRINT_FREQ == 0:
+            msg = 'batch: {0}/{1}\t' \
                   'Time {batch_time.val:.3f}s ({batch_time.avg:.3f}s)\t' \
                   'Speed {speed:.1f} samples/s\t' \
                   'Data {data_time.val:.3f}s ({data_time.avg:.3f}s)\t' \
-                  'Loss {loss.val:.5f} ({loss.avg:.5f})\t'.format(
-                      epoch, i, len(train_loader), batch_time=batch_time,
+                  'Loss {loss.val:.5f}\t'.format(i + 1, len(train_loader), batch_time=batch_time,
                       speed=inp.size(0)/batch_time.val,
                       data_time=data_time, loss=losses)
             print(msg)
@@ -107,19 +106,17 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
                     n_correct += 1
 
             if (i + 1) % config.PRINT_FREQ == 0:
-                print('Epoch: [{0}][{1}/{2}]'.format(epoch, i, len(val_loader)))
+                print('Epoch: [{0}][{1}/{2}]'.format(epoch, i + 1, len(val_loader)))
 
             if i == config.TEST.NUM_TEST:
                 break
 
     raw_preds = converter.decode(preds.data, preds_size.data, raw=True)[:config.TEST.NUM_TEST_DISP]
     for raw_pred, pred, gt in zip(raw_preds, sim_preds, labels):
-        print('%-20s => %-20s, gt: %-20s' % (raw_pred, pred, gt))
+        print('{}\t{}\tgt:{}'.format(raw_pred, pred, gt))
 
-    print(n_correct)
-    print(config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU)
     accuracy = n_correct / float(config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU)
-    print('Test loss: {:.4f}, accuray: {:.4f}'.format(losses.avg, accuracy))
+    print('correct: {}/{} \ttest loss: {:.4f} \taccuray: {:.4f}'.format(n_correct, config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU, losses.avg, accuracy))
 
     if writer_dict:
         writer = writer_dict['writer']
