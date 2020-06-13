@@ -7,3 +7,4 @@ test/tensorboard-logs/
 test/result/
 crnn/output/
 output/
+datasets/
