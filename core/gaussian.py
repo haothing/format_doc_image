@@ -4,7 +4,6 @@ import cv2
 import os
 import native_craft.imgproc
 
-
 class GaussianTransformer(object):
 
     def __init__(self, imgSize=512, region_threshold=0.4,

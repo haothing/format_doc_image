@@ -3,26 +3,27 @@ from easydict import EasyDict as edict
 import yaml
 import os
 import time, datetime
+
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
-import lib.models.crnn as crnn
-import lib.utils.utils as utils
-
-import core.trian
-from data_loader import SynthData
-
 from torch.utils.tensorboard import SummaryWriter
 import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
+import torchvision.transforms as transforms
+
+from native_craft.craft import CRAFT
+
+from core.train import train as craft_train
+from core.data_loader import SynthData
 from core.transforms import RotationListTransform, ToTensorListTransform
 import utils.toolkit as toolkit
 from core.text_detection import TextDetection as TD
 
 def parse_arg():
 
-    parser = argparse.ArgumentParser(description="train crnn")
+    parser = argparse.ArgumentParser(description="train craft")
     parser.add_argument('--cfg', help='experiment configuration filename', required=True, type=str)
     args = parser.parse_args()
 
@@ -30,14 +31,6 @@ def parse_arg():
         # config = yaml.load(f, Loader=yaml.FullLoader)
         config = yaml.load(f)
         config = edict(config)
-
-    #config.DATASET.ALPHABETS = alphabets.alphabet
-
-    # use japanese character
-    char_file = open(os.path.join('./lib/config/', config.DATASET.ALPHABETS), "r", encoding="utf-8")
-    config.DATASET.ALPHABETS = ''.join(char_file.read().splitlines())
-
-    config.MODEL.NUM_CLASSES = len(config.DATASET.ALPHABETS)
 
     return config
 
@@ -98,7 +91,7 @@ def main():
         model = DDP(model, device_ids=[device])
     else:
         model = model.to(device)
-    criterion = torch.nn.CTCLoss()
+    criterion = torch.nn.MSELoss()
     optimizer = toolkit.get_optimizer(config, model)
     
     if isinstance(config.TRAIN.LR_STEP, list):
@@ -113,7 +106,7 @@ def main():
         )
 
     obj_transforms = transforms.Compose([RotationListTransform(angles=[0, 30, 60, 90, -30, -60, -90]), ToTensorListTransform()])
-    train_dataset = SynthData(target_size=config.MODEL.IMAGE_SIZE, transform=obj_transforms, root=config.DATASET.ROOT, ground_true_file=config.DATASET.JSON_FILE['train'])
+    train_dataset = SynthData(target_size=config.MODEL.IMAGE_SIZE, transform=obj_transforms, root=config.DATASET.ROOT, ground_true_file=config.DATASET.GT_FILE['train'])
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=config.TRAIN.BATCH_SIZE_PER_GPU,
@@ -125,17 +118,17 @@ def main():
     start_time = time.time()
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
         
-        print('start epoch: {}/{} \telapsed time: {}\tlearning rate: {}'.format(epoch, config.TRAIN.END_EPOCH,
+        print('start epoch: {}/{} \telapsed time: {}\tlearning rate: {}'.format(epoch + 1, config.TRAIN.END_EPOCH,
             str(datetime.timedelta(seconds=(time.time() - start_time) // 1)), lr_scheduler.get_last_lr()))
-        function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch, writer_dict, output_dict)
+        craft_train(config, train_loader, model, criterion, optimizer, device, epoch, writer_dict, output_dict)
         lr_scheduler.step()
 
         #acc = function.validate(config, val_loader, val_dataset, converter, model, criterion, device, epoch, writer_dict, output_dict)
 
-        checkpoint_filename = "checkpoint_epoch_{}.pth".format(epoch)
-        torch.save({"state_dict": model.state_dict(),"epoch": epoch + 1}, os.path.join(output_dict['chs_dir'], checkpoint_filename))
+        checkpoint_filename = "checkpoint_epoch_{}.pth".format(epoch + 1)
+        torch.save(model.state_dict(), os.path.join(output_dict['chs_dir'], checkpoint_filename))
 
-        text_dtc = TD(weight_path=checkpoint_filename)
+        text_dtc = TD(weight_path=os.path.join(output_dict['chs_dir'], checkpoint_filename))
         text_dtc.draw_to_file(test_images_folder, dist_dir=os.path.join(test_images_folder, 'result', 'epoch_' + str(epoch)), heatmap=True)    
 
     writer_dict['writer'].close()

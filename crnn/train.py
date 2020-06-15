@@ -34,7 +34,6 @@ def parse_arg():
     # use japanese character
     char_file = open(os.path.join('./lib/config/', config.DATASET.ALPHABETS), "r", encoding="utf-8")
     config.DATASET.ALPHABETS = ''.join(char_file.read().splitlines())
-
     config.MODEL.NUM_CLASSES = len(config.DATASET.ALPHABETS)
 
     return config
@@ -138,9 +137,12 @@ def main():
     start_time = time.time()
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
         
-        print('start epoch: {}/{} \telapsed time: {}\tlearning rate: {}'.format(epoch + 1, config.TRAIN.END_EPOCH,
+        print('epoch: {}/{} \telapsed time: {}\tlearning rate: {}'.format(epoch + 1, config.TRAIN.END_EPOCH,
             str(datetime.timedelta(seconds=(time.time() - start_time) // 1)), lr_scheduler.get_last_lr()))
-        function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch, writer_dict, output_dict)
+        loss = function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch, writer_dict, output_dict)
+        if epoch + 1 == config.TRAIN.CHECK_EPOCH and loss > config.TRAIN.CHECK_LOSS:
+            break
+
         lr_scheduler.step()
 
         acc = function.validate(config, val_loader, val_dataset, converter, model, criterion, device, epoch, writer_dict, output_dict)
@@ -166,5 +168,5 @@ def main():
         cleanup_dist()
 
 if __name__ == '__main__':
-    for i in range(5):
+    for i in range(20):
         main()

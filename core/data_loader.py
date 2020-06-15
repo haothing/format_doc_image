@@ -4,7 +4,7 @@ import itertools
 import numpy as np
 
 import scipy.io as scio
-from gaussian import GaussianTransformer
+from core.gaussian import GaussianTransformer
 from PIL import Image
 from torchvision.datasets.vision import VisionDataset
 import torchvision.transforms.functional as TF

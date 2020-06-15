@@ -1,7 +1,7 @@
 GPUID: 0
 WORKERS: 0
 PRINT_FREQ: 10
-SAVE_CP_FROM: 400 # epoch to start save checkpoint 
+SAVE_CP_FROM: 150 # epoch to start save checkpoint 
 SAVE_CP_FREQ: 10 # save checkpoint every SAVE_FREQ epoch
 PIN_MEMORY: False
 OUTPUT_DIR: 'output'
@@ -16,9 +16,9 @@ CUDNN:
 
 DATASET:
   DATASET: OWN
-  ROOT: "F:/repositories/workspaces/format_doc_image/datasets/japanese_kana_simple_font_10k"
-  JSON_FILE: {'train': 'F:/repositories/workspaces/format_doc_image/datasets/japanese_kana_simple_font_10k/ground_true.txt', 
-    'val': 'F:/repositories/workspaces/format_doc_image/datasets/japanese_kana_simple_font_10k/test_ground_true.txt'}
+  ROOT: "E:/datasets/SynthText/ja_kana"
+  JSON_FILE: {'train': 'E:/datasets/SynthText/ja_kana/ground_true.txt', 
+    'val': 'E:/datasets/SynthText/ja_kana/test_ground_true.txt'}
   SCALE_FACTOR: 0.25
   ROT_FACTOR: 30
   STD: 0.193
@@ -28,13 +28,15 @@ DATASET:
 TRAIN:
   BATCH_SIZE_PER_GPU: 200
   SHUFFLE: True
-  BEGIN_EPOCH: 200
-  END_EPOCH: 500
+  BEGIN_EPOCH: 0
+  END_EPOCH: 200
+  CHECK_EPOCH: 50
+  CHECK_LOSS: 3
   RESUME:
-    IS_RESUME: TRUE
-    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/epoch0-200_lr0.002/best/checkpoint_199_acc_0.9760.pth'
+    IS_RESUME: False
+    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/best/checkpoint_400_acc_0.9920.pth'
   OPTIMIZER: 'adam'
-  LR: 0.001
+  LR: 0.002
   WD: 0.0
   #LR_STEP: [60, 80] 
   LR_STEP: [80]
@@ -53,7 +55,7 @@ TEST:
 MODEL:
   NAME: 'crnn'
   IMAGE_SIZE:
-    OW: 160. # origial width: 280
+    OW: 280. # origial width: 280
     H: 32
     W: 160   # resized width: 160
   NUM_CLASSES: 0
