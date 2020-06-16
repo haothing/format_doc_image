@@ -23,7 +23,7 @@ class _OWN(data.Dataset):
         with open(txt_file, 'r', encoding='utf-8') as file:
             self.labels = [{c.split(' ')[0]: c.split(' ')[-1][:-1]} for c in file.readlines()]
 
-        print("load {} images!".format(self.__len__()))
+        #print("load {} images!".format(self.__len__()))
 
     def __len__(self):
         return len(self.labels)

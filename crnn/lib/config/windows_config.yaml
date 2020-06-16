@@ -1,7 +1,7 @@
 GPUID: 0
 WORKERS: 0
 PRINT_FREQ: 10
-SAVE_CP_FROM: 150 # epoch to start save checkpoint 
+SAVE_CP_FROM: 320 # epoch to start save checkpoint 
 SAVE_CP_FREQ: 10 # save checkpoint every SAVE_FREQ epoch
 PIN_MEMORY: False
 OUTPUT_DIR: 'output'
@@ -29,14 +29,14 @@ TRAIN:
   BATCH_SIZE_PER_GPU: 200
   SHUFFLE: True
   BEGIN_EPOCH: 0
-  END_EPOCH: 200
-  CHECK_EPOCH: 50
-  CHECK_LOSS: 3
+  END_EPOCH: 500
+  CHECK_EPOCH: 20
+  CHECK_LOSS: 1
   RESUME:
-    IS_RESUME: False
-    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/best/checkpoint_400_acc_0.9920.pth'
+    IS_RESUME: True
+    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/best/checkpoint_120_acc_0.4250.pth'
   OPTIMIZER: 'adam'
-  LR: 0.002
+  LR: 0.001
   WD: 0.0
   #LR_STEP: [60, 80] 
   LR_STEP: [80]

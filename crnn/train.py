@@ -132,7 +132,6 @@ def main():
     )
 
     best_acc = 0.5
-    save_acc = 0.7
     converter = utils.strLabelConverter(config.DATASET.ALPHABETS)
     start_time = time.time()
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
@@ -140,7 +139,14 @@ def main():
         print('epoch: {}/{} \telapsed time: {}\tlearning rate: {}'.format(epoch + 1, config.TRAIN.END_EPOCH,
             str(datetime.timedelta(seconds=(time.time() - start_time) // 1)), lr_scheduler.get_last_lr()))
         loss = function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch, writer_dict, output_dict)
-        if epoch + 1 == config.TRAIN.CHECK_EPOCH and loss > config.TRAIN.CHECK_LOSS:
+        if config.TRAIN.CHECK_EPOCH > 0 and epoch + 1 == last_epoch + config.TRAIN.CHECK_EPOCH:
+            #if loss < config.TRAIN.CHECK_LOSS:
+            torch.save(
+                {"state_dict": model.state_dict(),
+                    "epoch": epoch + 1,
+                    "loss": loss,
+                }, os.path.join(output_dict['chs_dir'], "checkpoint_{}_loss_{:.4f}.pth".format(epoch + 1, loss))
+            )
             break
 
         lr_scheduler.step()
@@ -149,11 +155,10 @@ def main():
 
         is_best = acc > best_acc
         best_acc = max(acc, best_acc)
-
         #print("is best:", is_best)
         #print("best acc is:", best_acc)
         # save checkpoint
-        if (epoch + 1) % config.SAVE_CP_FREQ == 0 and (epoch + 1) >= config.SAVE_CP_FROM and acc >= save_acc:
+        if (epoch + 1) % config.SAVE_CP_FREQ == 0 and (epoch + 1) >= config.SAVE_CP_FROM:
             torch.save(
                 {
                     "state_dict": model.state_dict(),
@@ -168,5 +173,5 @@ def main():
         cleanup_dist()
 
 if __name__ == '__main__':
-    for i in range(20):
+    for i in range(50):
         main()
