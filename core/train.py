@@ -8,9 +8,9 @@ def train(config, train_loader, model, criterion, optimizer, device, epoch, writ
     loss_value = 0
     for i, (images, region_gt, affinity_gt) in enumerate(train_loader):
 
-        images = images.cuda()
-        region_gt = region_gt.cuda()
-        affinity_gt = affinity_gt.cuda()
+        images = images.to(device)
+        region_gt = region_gt.to(device)
+        affinity_gt = affinity_gt.to(device)
         #mask = mask.cuda()
 
         out, _ = model(images)
@@ -19,8 +19,8 @@ def train(config, train_loader, model, criterion, optimizer, device, epoch, writ
         #region_pdt = out[:, 0, :, :].cuda()
         #affinity_pdt = out[:, 1, :, :].cuda()
         
-        region_pdt = out[:, :, :, 0].cuda()
-        affinity_pdt = out[:, :, :, 1].cuda()
+        region_pdt = out[:, :, :, 0].to(device)
+        affinity_pdt = out[:, :, :, 1].to(device)
 
         loss = (torch.mean(criterion(region_pdt, region_gt)) + torch.mean(criterion(affinity_pdt, affinity_gt))) / config.TRAIN.BATCH_SIZE_PER_GPU
         #loss = criterion(region_gt, affinity_gt, region_pdt, affinity_pdt, mask)
