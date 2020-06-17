@@ -15,19 +15,18 @@ CUDNN:
 
 DATASET:
   DATASET: OWN
-  ROOT: "/home/repo/datasets/SynthText/300k"
-  JSON_FILE: {'train': '/home/repo/datasets/SynthText/300k/ground_true.txt', 'val': '/home/repo/datasets/SynthText/300k/test_ground_true.txt'}
+  ROOT: "/home/repo/datasets/SynthText/100k_big_img"
+  GT_FILE: {'train': 'gt.mat', 'val': ''}
   SCALE_FACTOR: 0.25
   ROT_FACTOR: 30
   STD: 0.193
   MEAN: 0.588
-  ALPHABETS: 'japanese_char.txt'
 
 TRAIN:
-  BATCH_SIZE_PER_GPU: 512
+  BATCH_SIZE_PER_GPU: 5
   SHUFFLE: True
   BEGIN_EPOCH: 0
-  END_EPOCH: 100
+  END_EPOCH: 2
   RESUME:
     IS_RESUME: False
     FILE: ''
@@ -35,7 +34,7 @@ TRAIN:
   LR: 0.001
   WD: 0.0
   LR_STEP: [60, 80]
-  LR_FACTOR: 0.1
+  LR_FACTOR: 1
   MOMENTUM: 0.0
   NESTEROV: False
   RMSPROP_ALPHA:
@@ -48,11 +47,5 @@ TEST:
   NUM_TEST_DISP: 10
 
 MODEL:
-  NAME: 'crnn'
-  IMAGE_SIZE:
-    OW: 160. # origial width: 280
-    H: 32
-    W: 160   # resized width: 160
-  NUM_CLASSES: 0
-  NUM_HIDDEN: 256
-
+  NAME: 'craft'
+  IMAGE_SIZE: 768

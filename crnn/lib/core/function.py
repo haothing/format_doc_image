@@ -114,7 +114,7 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
 
     raw_preds = converter.decode(preds.data, preds_size.data, raw=True)[:config.TEST.NUM_TEST_DISP]
     for raw_pred, pred, gt in zip(raw_preds, sim_preds, labels):
-        print('{:50}\t[{}  <>  {}]'.format(raw_pred, pred, gt))
+        print('{:80}        [ {}   <>   {} ]'.format(raw_pred, pred, gt))
 
     accuracy = n_correct / float(config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU)
     print('correct: {}/{} \ttest loss: {:.4f} \taccuray: {:.4f}'.format(n_correct, config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU, losses.avg, accuracy))
