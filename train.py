@@ -21,6 +21,9 @@ from core.transforms import RotationListTransform, ToTensorListTransform
 import utils.toolkit as toolkit
 from core.text_detection import TextDetection as TD
 
+# python train.py --cfg config/windows_config.yaml
+# python train.py --cfg config/linux_config.yaml
+
 def parse_arg():
 
     parser = argparse.ArgumentParser(description="train craft")
@@ -137,5 +140,5 @@ def main():
         cleanup_dist()
 
 if __name__ == '__main__':
-    for i in range(10):
+    for i in range(1):
         main()

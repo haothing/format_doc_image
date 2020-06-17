@@ -1,10 +1,10 @@
 GPUID: 0
 WORKERS: 4
 PRINT_FREQ: 100
-SAVE_FREQ: 100
+SAVE_FREQ: 1
 PIN_MEMORY: False
 OUTPUT_DIR: 'output'
-DISTRIBUTER: True
+DISTRIBUTER: False
 RANK: 0 # Rank of the current process. 
 WORLD_SIZE: 1
 
