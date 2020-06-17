@@ -26,7 +26,7 @@ class SynthData(VisionDataset):
 
     def __getitem__(self, index):
 
-        img_path = os.path.join(self.root, self.image[index][0])
+        img_path = os.path.join(self.root, self.image[index][0]).strip()
         image = Image.open(img_path).convert('RGB')
         wh = np.array(image).shape
 
