@@ -1,13 +1,16 @@
 from __future__ import print_function, absolute_import
 import torch.utils.data as data
+from torchvision.datasets.vision import VisionDataset
 import os
 import numpy as np
 import cv2
 
-class _OWN(data.Dataset):
-    def __init__(self, config, is_train=True):
+class _OWN(VisionDataset):
+    def __init__(self, config, is_train=True, transform=None, target_transform=None):
 
         self.root = config.DATASET.ROOT
+        super().__init__(self.root, transform=transform)
+
         self.is_train = is_train
         self.inp_h = config.MODEL.IMAGE_SIZE.H
         self.inp_w = config.MODEL.IMAGE_SIZE.W

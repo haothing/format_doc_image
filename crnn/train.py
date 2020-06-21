@@ -6,11 +6,17 @@ import time, datetime
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
+import torchvision.transforms as transforms
+
 import lib.models.crnn as crnn
 import lib.utils.utils as utils
 from lib.dataset import get_dataset
 from lib.core import function
 import lib.config.alphabets as alphabets
+
+import sys 
+sys.path.append('../')
+from core.transforms import RandomCompressTransform
 
 from torch.utils.tensorboard import SummaryWriter
 import torch.distributed as dist
@@ -113,7 +119,13 @@ def main():
             config.TRAIN.LR_FACTOR
         )
 
-    train_dataset = get_dataset(config)(config, is_train=True)
+    tc = transforms.Compose([
+        RandomCompressTransform(scale_width=(0.6, 1)),
+        transforms.RandomPerspective(distortion_scale =0.1),
+        transforms.RandomRotation(3),
+        transforms.ToTensor()])
+
+    train_dataset = get_dataset(config)(config, is_train=True, transform=tc)
     train_loader = DataLoader(
         dataset=train_dataset,
         batch_size=config.TRAIN.BATCH_SIZE_PER_GPU,
@@ -122,7 +134,7 @@ def main():
         pin_memory=config.PIN_MEMORY,
     )
 
-    val_dataset = get_dataset(config)(config, is_train=False)
+    val_dataset = get_dataset(config)(config, is_train=False, transform=tc)
     val_loader = DataLoader(
         dataset=val_dataset,
         batch_size=config.TEST.BATCH_SIZE_PER_GPU,
@@ -173,5 +185,5 @@ def main():
         cleanup_dist()
 
 if __name__ == '__main__':
-    for i in range(1):
+    for i in range(10):
         main()

@@ -81,7 +81,7 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
     losses = AverageMeter()
     model.eval()
 
-    n_correct = 0
+    n_correct, total = 0, 0
     with torch.no_grad():
         for i, (inp, idx) in enumerate(val_loader):
 
@@ -103,9 +103,17 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
             preds = preds.transpose(1, 0).contiguous().view(-1)
             sim_preds = converter.decode(preds.data, preds_size.data, raw=False)
             for pred, target in zip(sim_preds, labels):
-                if pred == target:
-                    n_correct += 1
+                for s_i in range(len(target)):
+                    try:
+                        pred_s = pred[s_i]
+                    except IndexError:
+                        continue
 
+                    if pred_s == target[s_i]:
+                        n_correct += 1
+
+            total += len(target) * config.TEST.BATCH_SIZE_PER_GPU
+            
             #if (i + 1) % config.PRINT_FREQ == 0:
             #    print('Epoch: [{0}][{1}/{2}]'.format(epoch, i + 1, len(val_loader)))
 
@@ -116,8 +124,8 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
     for raw_pred, pred, gt in zip(raw_preds, sim_preds, labels):
         print('{:80}        [ {}   <>   {} ]'.format(raw_pred, pred, gt))
 
-    accuracy = n_correct / float(config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU)
-    print('correct: {}/{} \ttest loss: {:.4f} \taccuray: {:.4f}'.format(n_correct, config.TEST.NUM_TEST * config.TEST.BATCH_SIZE_PER_GPU, losses.avg, accuracy))
+    accuracy = n_correct / total
+    print('correct: {}/{} \ttest loss: {:.4f} \taccuray: {:.4f}'.format(n_correct, total, losses.avg, accuracy))
 
     if writer_dict:
         writer = writer_dict['writer']

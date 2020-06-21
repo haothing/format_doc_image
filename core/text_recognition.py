@@ -9,12 +9,13 @@ import utils.toolkit as tools
 
 class TextRecognition():
 
-    def __init__(self, net=None, cpu=False, character_set_file='/crnn/lib/config/japanese_char.txt', height=32, 
+    def __init__(self, net=None, cpu=False, character_set_file='/crnn/lib/config/japanese_char.txt', height=32, width=160,
         weight_path='/weights/text_recognition/checkpoint_500_acc_0.9930.pth'):
 
         super().__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() and not cpu else 'cpu')
         self.height = height
+        self.width = width
         self.trans_std = 0.193
         self.trans_mean = 0.588
 
@@ -32,8 +33,8 @@ class TextRecognition():
 
     def __init_image(self, pil_image):
 
-        img = pil_image.convert('L')     
-        img = img.resize((int(self.height / img.height * img.width), self.height))
+        img = pil_image.convert('L')
+        img = img.resize((self.width, self.height))
         img = (np.array(img).astype(np.float32) / 255. - self.trans_mean) / self.trans_std
         img = np.reshape(img, (1, 1, self.height, -1))
 
