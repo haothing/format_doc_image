@@ -4,9 +4,10 @@ from torchvision.datasets.vision import VisionDataset
 import os
 import numpy as np
 import cv2
+from PIL import Image
 
 class _OWN(VisionDataset):
-    def __init__(self, config, is_train=True, transform=None, target_transform=None):
+    def __init__(self, config, is_train=True, transform=None):
 
         self.root = config.DATASET.ROOT
         super().__init__(self.root, transform=transform)
@@ -34,14 +35,19 @@ class _OWN(VisionDataset):
     def __getitem__(self, idx):
 
         img_name = list(self.labels[idx].keys())[0]
-        img = cv2.imread(os.path.join(self.root, img_name))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = Image.open(os.path.join(self.root, img_name))       
+        if self.transform is not None:
+            img = self.transform(img)
+        
+        img = img.resize((self.inp_w, self.inp_h), Image.BICUBIC)
+        img = np.array(img)
+        
+        # img_h, img_w = img.shape
+        # img = cv2.imread(os.path.join(self.root, img_name))
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # img = cv2.resize(img, (0,0), fx=self.inp_w / img_w, fy=self.inp_h / img_h, interpolation=cv2.INTER_CUBIC)
 
-        img_h, img_w = img.shape
-
-        img = cv2.resize(img, (0,0), fx=self.inp_w / img_w, fy=self.inp_h / img_h, interpolation=cv2.INTER_CUBIC)
         img = np.reshape(img, (self.inp_h, self.inp_w, 1))
-
         img = img.astype(np.float32)
         img = (img/255. - self.mean) / self.std
         img = img.transpose([2, 0, 1])

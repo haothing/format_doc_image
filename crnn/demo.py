@@ -9,7 +9,8 @@ import lib.config.alphabets as alphabets
 import yaml
 from easydict import EasyDict as edict
 import argparse
- 
+
+# python demo.py --image_path images/1.jpg --checkpoint F:\repositories\workspaces\format_doc_image\weights\text_recognition\mixed_second_finetune_acc_97P7.pth
 def parse_arg():
     parser = argparse.ArgumentParser(description="demo")
 

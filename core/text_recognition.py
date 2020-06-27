@@ -5,22 +5,24 @@ import torch
 from PIL import Image, ImageDraw
 
 import crnn.lib.models.crnn as crnn
+import crnn.lib.config.alphabets as alphabets
 import utils.toolkit as tools
 
 class TextRecognition():
 
-    def __init__(self, net=None, cpu=False, character_set_file='/crnn/lib/config/japanese_char.txt', height=32, width=160,
+    def __init__(self, net=None, cpu=False, character_set_file='/crnn/lib/config/japanese_char.txt',
         weight_path='/weights/text_recognition/checkpoint_500_acc_0.9930.pth'):
 
         super().__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() and not cpu else 'cpu')
-        self.height = height
-        self.width = width
+        self.height = 32
+        self.scale = 160 / 280
         self.trans_std = 0.193
         self.trans_mean = 0.588
 
         char_file = open(character_set_file, "r", encoding="utf-8")
         char_set = ''.join(char_file.read().splitlines())
+        #char_set = alphabets.alphabet
         self.num_class = len(char_set) + 1
         self.num_hidden = 256
         self.converter = tools.strLabelConverter(char_set)
@@ -28,13 +30,14 @@ class TextRecognition():
         if not net:
             self.net = crnn.CRNN(self.height, 1, self.num_class, self.num_hidden)
             self.net.load_state_dict(torch.load(weight_path)['state_dict'])
+            #self.net.load_state_dict(torch.load(weight_path))
             self.net = self.net.to(self.device)
             self.net.eval()
 
     def __init_image(self, pil_image):
 
         img = pil_image.convert('L')
-        img = img.resize((self.width, self.height))
+        img = img.resize((int(self.scale * img.width), self.height))
         img = (np.array(img).astype(np.float32) / 255. - self.trans_mean) / self.trans_std
         img = np.reshape(img, (1, 1, self.height, -1))
 

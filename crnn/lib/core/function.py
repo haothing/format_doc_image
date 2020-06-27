@@ -104,15 +104,16 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
             sim_preds = converter.decode(preds.data, preds_size.data, raw=False)
             for pred, target in zip(sim_preds, labels):
                 for s_i in range(len(target)):
+                    total += 1
                     try:
                         pred_s = pred[s_i]
                     except IndexError:
                         continue
-
+                    
                     if pred_s == target[s_i]:
                         n_correct += 1
 
-            total += len(target) * config.TEST.BATCH_SIZE_PER_GPU
+            # total += len(target) * config.TEST.BATCH_SIZE_PER_GPU
             
             #if (i + 1) % config.PRINT_FREQ == 0:
             #    print('Epoch: [{0}][{1}/{2}]'.format(epoch, i + 1, len(val_loader)))

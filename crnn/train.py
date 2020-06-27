@@ -122,8 +122,7 @@ def main():
     tc = transforms.Compose([
         RandomCompressTransform(scale_width=(0.6, 1)),
         transforms.RandomPerspective(distortion_scale =0.1),
-        transforms.RandomRotation(3),
-        transforms.ToTensor()])
+        transforms.RandomRotation(3)])
 
     train_dataset = get_dataset(config)(config, is_train=True, transform=tc)
     train_loader = DataLoader(
@@ -185,5 +184,5 @@ def main():
         cleanup_dist()
 
 if __name__ == '__main__':
-    for i in range(10):
+    for i in range(1):
         main()

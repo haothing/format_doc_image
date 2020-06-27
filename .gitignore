@@ -8,3 +8,4 @@ test/result/
 crnn/output/
 output/
 datasets/
+weights/
