@@ -1,7 +1,8 @@
 GPUID: 0
-WORKERS: 4
+WORKERS: 0
 PRINT_FREQ: 10
-SAVE_FREQ: 1
+SAVE_CP_FROM: 90 # epoch to start save checkpoint 
+SAVE_CP_FREQ: 2 # save checkpoint every SAVE_FREQ epoch
 PIN_MEMORY: False
 OUTPUT_DIR: 'output'
 DISTRIBUTER: True
@@ -15,25 +16,30 @@ CUDNN:
 
 DATASET:
   DATASET: OWN
-  ROOT: "/home/repo/datasets/SynthText/100k_big_img"
-  GT_FILE: {'train': 'gt.mat', 'val': ''}
+  ROOT: "E:/datasets/SynthText/ja_char"
+  JSON_FILE: {'train': 'E:/datasets/SynthText/ja_char/ground_true.txt', 
+    'val': 'E:/datasets/SynthText/ja_char/test_ground_true.txt'}
   SCALE_FACTOR: 0.25
   ROT_FACTOR: 30
   STD: 0.193
   MEAN: 0.588
+  ALPHABETS: 'japanese_char.txt'
 
 TRAIN:
-  BATCH_SIZE_PER_GPU: 50
+  BATCH_SIZE_PER_GPU: 400
   SHUFFLE: True
   BEGIN_EPOCH: 0
-  END_EPOCH: 5
+  END_EPOCH: 100
+  CHECK_EPOCH: -1
+  CHECK_LOSS: 1
   RESUME:
     IS_RESUME: False
-    FILE: ''
+    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/best/checkpoint_100_acc_0.9906.pth'
   OPTIMIZER: 'adam'
-  LR: 0.001
+  LR: 0.005
   WD: 0.0
-  LR_STEP: [60, 80]
+  #LR_STEP: [60, 80] 
+  LR_STEP: [80]
   LR_FACTOR: 1
   MOMENTUM: 0.0
   NESTEROV: False
@@ -47,5 +53,11 @@ TEST:
   NUM_TEST_DISP: 10
 
 MODEL:
-  NAME: 'craft'
-  IMAGE_SIZE: 768
+  NAME: 'crnn'
+  IMAGE_SIZE:
+    OW: 280. # origial width: 280
+    H: 32
+    W: 160   # resized width: 160
+  NUM_CLASSES: 0
+  NUM_HIDDEN: 256
+

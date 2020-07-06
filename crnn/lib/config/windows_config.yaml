@@ -1,7 +1,7 @@
 GPUID: 0
 WORKERS: 0
 PRINT_FREQ: 10
-SAVE_CP_FROM: 90 # epoch to start save checkpoint 
+SAVE_CP_FROM: 180 # epoch to start save checkpoint 
 SAVE_CP_FREQ: 2 # save checkpoint every SAVE_FREQ epoch
 PIN_MEMORY: False
 OUTPUT_DIR: 'output'
@@ -26,15 +26,15 @@ DATASET:
   ALPHABETS: 'japanese_char.txt'
 
 TRAIN:
-  BATCH_SIZE_PER_GPU: 200
+  BATCH_SIZE_PER_GPU: 400
   SHUFFLE: True
   BEGIN_EPOCH: 0
-  END_EPOCH: 100
+  END_EPOCH: 200
   CHECK_EPOCH: -1
   CHECK_LOSS: 1
   RESUME:
     IS_RESUME: False
-    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/best/checkpoint_100_acc_0.9906.pth'
+    FILE: 'F:/repositories/workspaces/format_doc_image/crnn/output/OWN/crnn/best/checkpoint_400_acc_0.9487.pth'
   OPTIMIZER: 'adam'
   LR: 0.001
   WD: 0.0

@@ -23,6 +23,8 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
 
+# tensorboard --logdir F:\repositories\workspaces\format_doc_image\crnn\output\OWN\crnn\ 
+
 def parse_arg():
     parser = argparse.ArgumentParser(description="train crnn")
 
@@ -120,7 +122,7 @@ def main():
         )
 
     tc = transforms.Compose([
-        RandomCompressTransform(scale_width=(0.6, 1)),
+        # RandomCompressTransform(scale_width=(0.6, 1)),
         transforms.RandomPerspective(distortion_scale =0.1),
         transforms.RandomRotation(3)])
 
