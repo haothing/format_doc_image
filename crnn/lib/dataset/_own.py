@@ -21,11 +21,15 @@ class _OWN(VisionDataset):
         self.mean = np.array(config.DATASET.MEAN, dtype=np.float32)
         self.std = np.array(config.DATASET.STD, dtype=np.float32)
 
-        txt_file = config.DATASET.JSON_FILE['train'] if is_train else config.DATASET.JSON_FILE['val']
+        txt_files = config.DATASET.JSON_FILE['train'] if is_train else config.DATASET.JSON_FILE['val']
+        if type(txt_files) is not list:
+            txt_files = [txt_files]
 
         # convert name:indices to name:string
-        with open(txt_file, 'r', encoding='utf-8') as file:
-            self.labels = [{c.split(' ')[0]: c.split(' ')[-1][:-1]} for c in file.readlines()]
+        self.labels = []
+        for txt_file in txt_files:
+            with open(txt_file, 'r', encoding='utf-8') as file:
+                self.labels += [{c.split(' ')[0]: c.split(' ')[-1][:-1]} for c in file.readlines()]
 
         #print("load {} images!".format(self.__len__()))
 
@@ -48,8 +52,10 @@ class _OWN(VisionDataset):
         # img = cv2.resize(img, (0,0), fx=self.inp_w / img_w, fy=self.inp_h / img_h, interpolation=cv2.INTER_CUBIC)
 
         img = np.reshape(img, (self.inp_h, self.inp_w, 1))
-        img = img.astype(np.float32)
-        img = (img/255. - self.mean) / self.std
+        img = img.astype(np.float32) / 255.
+        # TODO comment out get standard score use setting
+        # img = (img - self.mean) / self.std
+        img = (img - img.mean()) / img.std()
         img = img.transpose([2, 0, 1])
 
         return img, idx
